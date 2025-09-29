@@ -1,4 +1,4 @@
-## Speech Segmentation Web App
+# Speech Segmentation Web App
 
 Interactive FastAPI experience for the assignment in `assignment.md`. Paste the provided FileBin video (or any supported audio/video URL) and the app will:
 
@@ -77,3 +77,7 @@ The app modules compile successfully:
 ```bash
 python -m compileall app
 ```
+
+### Credits
+
+Built with care by [Aryan](https://github.com/aryankumarofficial) to support the speech-segmentation assignment workflow. Connect on [LinkedIn](https://www.linkedin.com/in/aryankumarofficial) or explore more projects on the [portfolio site](https://aryankumarofficial.tech).
