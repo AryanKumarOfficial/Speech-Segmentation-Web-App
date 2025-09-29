@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Speech Segmentation Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            color-scheme: light dark;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+            --muted: #cbd5f5;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --border: rgba(148, 163, 184, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        main {
+            width: min(960px, 95vw);
+            background: linear-gradient(160deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.95));
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 40px 80px rgba(15, 23, 42, 0.35);
+            border: 1px solid var(--border);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.04em;
+        }
+
+        p {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        form {
+            margin-top: 32px;
+            display: grid;
+            gap: 18px;
+            grid-template-columns: 2fr auto;
+            align-items: center;
+        }
+
+        label {
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        input[type="url"] {
+            padding: 16px 18px;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            font-size: 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text);
+            outline: none;
+            transition: border 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+        }
+
+        input[type="url"]:focus {
+            border-color: rgba(56, 189, 248, 0.7);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+        }
+
+        button {
+            padding: 16px 28px;
+            border-radius: 14px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: #0f172a;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.25);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 30px 60px rgba(14, 165, 233, 0.35);
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: none;
+        }
+
+        button.secondary {
+            background: rgba(15, 23, 42, 0.2);
+            color: var(--accent);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: none;
+        }
+
+        button.secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 32px rgba(14, 165, 233, 0.25);
+            color: var(--accent-hover);
+        }
+
+        .status-card {
+            margin-top: 32px;
+            background: rgba(15, 15, 26, 0.35);
+            border-radius: 18px;
+            padding: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.08);
+        }
+
+        .status-card h2 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            letter-spacing: -0.01em;
+        }
+
+        .status {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: var(--muted);
+        }
+
+        .demo-card {
+            margin-top: 20px;
+            padding: 24px;
+            border-radius: 18px;
+            background: rgba(30, 41, 59, 0.35);
+            border: 1px dashed rgba(56, 189, 248, 0.35);
+            display: flex;
+            gap: 12px;
+            flex-direction: column;
+        }
+
+        .demo-card h2 {
+            margin: 0;
+            font-size: 1.15rem;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 18px;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(51, 65, 85, 0.4);
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(30, 41, 59, 0.4);
+        }
+
+        tr:nth-child(odd) {
+            background: rgba(15, 23, 42, 0.35);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+        }
+
+        .result-grid {
+            display: grid;
+            gap: 24px;
+            margin-top: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .result-card {
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .result-card h3 {
+            margin: 0 0 12px 0;
+            font-size: 1.05rem;
+            color: var(--text);
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            button.secondary {
+                margin-top: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Speech Segmentation</h1>
+            <p>Paste the assignment video or audio URL. We'll extract speech segments, timestamps, and downloadable audio clips for you.</p>
+        </header>
+
+        <form id="process-form">
+            <div>
+                <label for="url">Source URL</label>
+                <input type="url" id="url" name="url" placeholder="https://filebin.net/..." required />
+            </div>
+            <div>
+                <button type="submit">Process Audio</button>
+            </div>
+        </form>
+
+        <section class="demo-card">
+            <h2>Just exploring?</h2>
+            <p class="muted">Generate a synthetic audio job to try the interface without providing a real URL.</p>
+            <button type="button" class="secondary" id="demo-btn">Run demo walkthrough</button>
+        </section>
+
+        <section class="status-card">
+            <h2>Status</h2>
+            <p class="status" id="status">Waiting for input.</p>
+        </section>
+
+        <section id="results" style="display: none;">
+            <div class="result-grid">
+                <div class="result-card">
+                    <h3>Extracted Audio</h3>
+                    <p class="muted"><a id="audio-link" href="#" target="_blank">Download WAV</a></p>
+                </div>
+                <div class="result-card">
+                    <h3>Speech Timestamps</h3>
+                    <p class="muted"><a id="timestamps-link" href="#" target="_blank">View JSON</a></p>
+                </div>
+            </div>
+
+            <p class="muted" id="demo-note" style="display: none; margin-top: 12px;">This is demo data generated on the fly. Use a real URL to analyse your own media.</p>
+
+            <h2 style="margin-top: 36px;">Speech Segments</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Start (s)</th>
+                        <th>End (s)</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody id="segments"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById('process-form');
+        const statusEl = document.getElementById('status');
+        const resultsEl = document.getElementById('results');
+        const segmentsEl = document.getElementById('segments');
+        const audioLink = document.getElementById('audio-link');
+        const timestampsLink = document.getElementById('timestamps-link');
+        const submitBtn = form.querySelector('button');
+        const demoBtn = document.getElementById('demo-btn');
+        const demoNote = document.getElementById('demo-note');
+        const actionButtons = [submitBtn, demoBtn];
+
+        function setProcessingState(isProcessing, message) {
+            actionButtons.forEach((button) => {
+                button.disabled = isProcessing;
+            });
+
+            if (isProcessing) {
+                statusEl.textContent = message;
+                resultsEl.style.display = 'none';
+            }
+        }
+
+        function renderSegments(segments) {
+            segmentsEl.innerHTML = '';
+
+            if (!segments.length) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="4">No speech segments detected.</td>';
+                segmentsEl.appendChild(row);
+                return;
+            }
+
+            segments.forEach((segment, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${segment.start.toFixed(2)}</td>
+                    <td>${segment.end.toFixed(2)}</td>
+                    <td><a href="${segment.url}" target="_blank">segment_${String(index + 1).padStart(3, '0')}</a></td>
+                `;
+                segmentsEl.appendChild(row);
+            });
+        }
+
+        function renderResult(result) {
+            audioLink.href = result.audio_file;
+            timestampsLink.href = result.timestamps_file;
+            renderSegments(result.segments || []);
+
+            if (result.demo) {
+                statusEl.textContent = `✅ Demo ready! Job ID: ${result.job_id}`;
+                demoNote.style.display = 'block';
+            } else {
+                statusEl.textContent = `✅ Completed! Job ID: ${result.job_id}`;
+                demoNote.style.display = 'none';
+            }
+
+            resultsEl.style.display = 'block';
+        }
+
+        async function runProcess({ endpoint, payload = {}, loadingMessage }) {
+            setProcessingState(true, loadingMessage);
+
+            try {
+                const hasPayload = payload && Object.keys(payload).length > 0;
+                const requestInit = { method: 'POST' };
+
+                if (hasPayload) {
+                    requestInit.headers = { 'Content-Type': 'application/json' };
+                    requestInit.body = JSON.stringify(payload);
+                }
+
+                const response = await fetch(endpoint, requestInit);
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Processing failed');
+                }
+
+                const result = await response.json();
+                renderResult(result);
+            } catch (error) {
+                console.error(error);
+                statusEl.textContent = `❌ ${error.message}`;
+                demoNote.style.display = 'none';
+                resultsEl.style.display = 'none';
+            } finally {
+                setProcessingState(false);
+            }
+        }
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const urlField = document.getElementById('url');
+            runProcess({
+                endpoint: '/api/process',
+                payload: { url: urlField.value },
+                loadingMessage: 'Processing… this might take up to a minute for large files.',
+            });
+        });
+
+        demoBtn.addEventListener('click', () => {
+            runProcess({
+                endpoint: '/api/demo',
+                payload: {},
+                loadingMessage: 'Generating demo audio…',
+            });
+        });
+    </script>
+</body>
+</html>
