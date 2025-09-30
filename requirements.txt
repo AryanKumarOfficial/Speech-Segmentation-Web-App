@@ -2,7 +2,7 @@ requests
 pydub
 moviepy==1.0.3
 jinja2
-audioop-lts
+# audioop-lts
 
 fastapi==0.95.2
 uvicorn[standard]==0.22.0
