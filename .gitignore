@@ -4,3 +4,6 @@ __pycache__/
 *.pyo
 output/
 *.sh
+
+*.env.*
+!.env.example

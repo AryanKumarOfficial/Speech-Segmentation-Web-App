@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: speech-segmentation
+    env: docker
+    repo: https://github.com/AryanKumarOfficial/Speech-Segmentation-Web-App
+    branch: main
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    instanceType: starter
+    envVars:
+      - key: PORT
+        value: 8000
