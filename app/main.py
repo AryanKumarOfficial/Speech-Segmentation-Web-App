@@ -31,8 +31,6 @@ output_path.mkdir(parents=True, exist_ok=True)
 app.mount("/output", StaticFiles(directory=str(output_path)), name="output")
 
 
-
-
 class ProcessRequest(BaseModel):
     url: HttpUrl
 
@@ -66,6 +64,11 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
+@app.get("/healthz")
+async def health_check():
+    return {"status": "ok"}
+
+
 @app.post("/api/process")
 async def process_audio(req: ProcessRequest):
     try:
@@ -80,5 +83,3 @@ async def process_audio(req: ProcessRequest):
 async def demo_audio():
     result = generate_demo_job()
     return _shape_response(result)
-
-
